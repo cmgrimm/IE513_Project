@@ -30,7 +30,7 @@ shinyUI(
                    #select lambda function
                    selectInput("l_fun",
                                "Select Lambda Function:",
-                               choices=c("f(t) = |sin(t)|","f(t) = t","f(t) = log(t)")
+                               c("f(t) = |sin(t)|","f(t) = t","f(t) = log(t)")
                                ),#end selectInput
                    sliderInput("t_instance",
                                "Select t",

@@ -1,14 +1,14 @@
 {
     "collab_server" : "",
-    "contents" : "\n# This is the server logic for a Shiny web application.\n# You can find out more about building applications with Shiny here:\n#\n# http://shiny.rstudio.com\n#\n\nlibrary(shiny)\n\nshinyServer(function(input, output) {\n\n  t_intervals <- 0:100\n  \n  l_fun <- reactive({\n    as.character(input$l_fun)\n  })#end l_fun\n  \n  l_calculation <- function(t,f_t) {\n    \n    if(f_t == \"f(t) = |sin(t)|\"){\n      abs(sin(t))\n    }else if (f_t == \"f(t) = t\"){\n      t\n    }else {\n      log(t)\n    }#end ifelse block\n    \n    \n    # switch(f_t,\n    #        \"f(t) = |sin(t)|\" = abs(sin(t)),\n    #        \"f(t) = t\" = t,\n    #        \"f(t) = log(t)\" = log(t)\n    #        )#end switch\n  }#end l_calculation\n  \n  y <- l_calculation(t_intervals,l_fun)\n\n  output$l_fun_hc <- renderHighchart({\n    hc <- highchart() %>%\n      hc_xAxis(title = \"Time\", categories = t_intervals ) %>%\n      hc_add_series(name = \"Lambda\", data = y)\n  })\n  \n  output$test <- renderText({\n    l_fun\n  })\n})\n",
+    "contents" : "\n# This is the server logic for a Shiny web application.\n# You can find out more about building applications with Shiny here:\n#\n# http://shiny.rstudio.com\n#\n\nlibrary(shiny)\n\nshinyServer(function(input, output) {\n\n  t_intervals <- 0:100\n\n  l_calculation <- reactive({\n    switch(input$l_fun,\n           \"f(t) = |sin(t)|\" = function(t) abs(sin(t)),\n           \"f(t) = t\" = function(t) t,\n           \"f(t) = log(t)\" = function(t) log(t)\n           )#end switch\n  })#end l_calculation\n  \n  isolate(l_calculation())\n  \n  y <- l_calculation(t_intervals)#calculate lambda\n\n  # output$l_fun_hc <- renderHighchart({\n  #   hc <- highchart() %>%\n  #     hc_xAxis(title = \"Time\", categories = t_intervals ) %>%\n  #     hc_add_series(name = \"Lambda\", data = y)\n  # })\n  \n  output$test <- renderText({\n    paste0(y,sep=\",\",collapse = \",\")\n  })\n})\n",
     "created" : 1510603668616.000,
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "1604553670",
+    "hash" : "1887019296",
     "id" : "E831AC2D",
-    "lastKnownWriteTime" : 1510606352,
-    "last_content_update" : 1510606352457,
+    "lastKnownWriteTime" : 1510607716,
+    "last_content_update" : 1510607717021,
     "path" : "//my.files.iastate.edu/Users/cmgrimm/Desktop/GitHub/IE513_Project/server.R",
     "project_path" : "server.R",
     "properties" : {

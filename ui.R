@@ -5,27 +5,52 @@
 # http://shiny.rstudio.com
 #
 
-library(shiny)
 
-shinyUI(fluidPage(
-
-  # Application title
-  titlePanel("Old Faithful Geyser Data"),
-
-  # Sidebar with a slider input for number of bins
-  sidebarLayout(
-    sidebarPanel(
-      sliderInput("bins",
-                  "Number of bins:",
-                  min = 1,
-                  max = 50,
-                  value = 30,
-                  step = 0.1)
-    ),
-
-    # Show a plot of the generated distribution
-    mainPanel(
-      
-    )
+packages <- c(
+  "shiny",
+  "highcharter"
   )
-))
+ipak <- function(pkg){
+  new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
+  if (length(new.pkg)) 
+    install.packages(new.pkg, dependencies = TRUE)
+  sapply(pkg, require, character.only = TRUE)
+}
+
+ipak(packages)
+
+shinyUI(
+  navbarPage(
+    title = "Non-Homogenious Poisson Process",
+    tabPanel("Home",
+             fluidPage(
+               sidebarLayout(
+                 sidebarPanel(
+                   
+                   #select lambda function
+                   selectInput("l_fun",
+                               "Select Lambda Function:",
+                               choices=c("f(t) = |sin(t)|","f(t) = t","f(t) = log(t)")
+                               ),#end selectInput
+                   sliderInput("t_instance",
+                               "Select t",
+                               min = 0,
+                               max = 100,
+                               value = 10
+                               )#end sliderInput
+                   
+                 ),#end sidebarPanel
+                 mainPanel(
+                   highchartOutput("l_fun_hc"),#end highchartOutput 
+                   textOutput("test")
+                 )#end mainPanel
+                 
+               )#end sidebarLayout
+               
+             )#end fluidPage
+             
+    )#end tabPanel 'Home'
+    
+  )#end navbarPage
+  
+)#end shinyUI

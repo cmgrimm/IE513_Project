@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "\n# This is the user-interface definition of a Shiny web application.\n# You can find out more about building applications with Shiny here:\n#\n# http://shiny.rstudio.com\n#\n\n\npackages <- c(\n  \"shiny\",\n  \"highcharter\"\n  )\nipak <- function(pkg){\n  new.pkg <- pkg[!(pkg %in% installed.packages()[, \"Package\"])]\n  if (length(new.pkg)) \n    install.packages(new.pkg, dependencies = TRUE)\n  sapply(pkg, require, character.only = TRUE)\n}\n\nipak(packages)\n\nshinyUI(\n  navbarPage(\n    title = \"Non-Homogenious Poisson Process\",\n    tabPanel(\"Home\",\n             fluidPage(\n               sidebarLayout(\n                 sidebarPanel(\n                   \n                   #select lambda function\n                   selectInput(\"l_fun\",\n                               \"Select Lambda Function:\",\n                               choices=c(\"f(t) = |sin(t)|\",\"f(t) = t\",\"f(t) = log(t)\")\n                               ),#end selectInput\n                   sliderInput(\"t_instance\",\n                               \"Select t\",\n                               min = 0,\n                               max = 100,\n                               value = 10\n                               )#end sliderInput\n                   \n                 ),#end sidebarPanel\n                 mainPanel(\n                   highchartOutput(\"l_fun_hc\"),#end highchartOutput \n                   textOutput(\"test\")\n                 )#end mainPanel\n                 \n               )#end sidebarLayout\n               \n             )#end fluidPage\n             \n    )#end tabPanel 'Home'\n    \n  )#end navbarPage\n  \n)#end shinyUI\n",
+    "created" : 1510603667992.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3557156470",
+    "id" : "4E593533",
+    "lastKnownWriteTime" : 1510606306,
+    "last_content_update" : 1510606306381,
+    "path" : "//my.files.iastate.edu/Users/cmgrimm/Desktop/GitHub/IE513_Project/ui.R",
+    "project_path" : "ui.R",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

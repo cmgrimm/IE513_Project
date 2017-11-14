@@ -19,6 +19,8 @@ ipak <- function(pkg){
 
 ipak(packages)
 
+# Begin server ------------------------------------------------------------
+
 shinyServer(function(input, output) {
 
   t_intervals <- reactive({ seq(1,input$t_max,1) })
@@ -28,7 +30,7 @@ shinyServer(function(input, output) {
     switch(input$l_fun,
            "f(t) = sin(t/4)+2" = function(t) (sin(t/4)+2),
            "f(t) = t" = function(t) t,
-           "f(t) = |log(t)|" = function(t) abs(log(t))
+           "f(t) = log(t)" = function(t) log(t)
     )#end switch
   })#end l_
   
@@ -52,6 +54,7 @@ shinyServer(function(input, output) {
   # Outputs -----------------------------------------------------------------
   
   output$t_instance_ui <- renderUI({
+    
     sliderInput("t_instance",
                 "Select a Time Instance",
                 min = 1,
@@ -66,7 +69,7 @@ shinyServer(function(input, output) {
       hc_xAxis(#categories = t_intervals(),
                plotLines = list(
                 list(
-                  label = list(text = paste0(c("Lambda: ", round(l_instance(),digits = 2)))),
+                  label = list(text = paste0(c("Lambda: ", round(l_instance(),digits = 2)),collapse="")),
                   color = "#FF0000",
                   width = 2,
                   value = t_instance()
@@ -78,7 +81,8 @@ shinyServer(function(input, output) {
                     marker=list(enabled=F)) %>%
       hc_title(text = "Lambda as a Function of Time",
                align = 'left') %>%
-      hc_exporting(enabled = T)
+      hc_exporting(enabled = T) %>%
+      hc_add_theme(hc_theme_tufte())
   })
   
   output$p_dist_instance_hc <- renderHighchart({
@@ -86,7 +90,8 @@ shinyServer(function(input, output) {
       hc_xAxis(seq(0,10)) %>%
       hc_add_series(name = "P(X = x)", 
                     data = p_dist(), 
-                    marker=list(enabled=F)) %>%
+                    marker=list(enabled=F),
+                    type = "area") %>%
       hc_yAxis(min = 0, max = 0.5) %>%
       hc_title(text = "Poisson Distribution",align = "left")# %>%
       # hc_chart(

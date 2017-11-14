@@ -21,14 +21,14 @@ ipak(packages)
 
 shinyUI(
   fluidPage(
-    titlePanel = "Non-Homogenious Poisson Process",
+    titlePanel("Non-Homogenious Poisson Process"),
              fluidPage(
                fluidRow(
                  column(width = 4,
                    #select lambda function
                    selectInput("l_fun",
                                "Select Lambda Function:",
-                               c("f(t) = sin(t/4)+2","f(t) = t","f(t) = |log(t)|")
+                               c("f(t) = sin(t/4)+2","f(t) = t","f(t) = log(t)")
                                )#end selectInput
                  ),#end column
                  column(width = 4,
@@ -36,7 +36,7 @@ shinyUI(
                                      "Select the Maximum Time",
                                      min = 1,
                                      max = 10000,
-                                     value = 1,
+                                     value = 50,
                                      step = 1
                         )#end numeric input t_instance
                  ),#end column

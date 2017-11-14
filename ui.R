@@ -30,8 +30,8 @@ shinyUI(
                  column(width = 4,
                    #select lambda function
                    selectInput("l_fun",
-                               "Select Lambda Function:",
-                               c("f(t) = sin(t/4)+2","f(t) = t","f(t) = log(t)")
+                               HTML("Select &lambda;(t) Function:"),
+                               c("sin(t/4)+2","t","log(t)")
                                )#end selectInput
                  ),#end column
                  column(width = 4,

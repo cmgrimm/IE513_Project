@@ -30,9 +30,9 @@ shinyServer(function(input, output) {
   #set the function of lambda
   l_calculation <- reactive({
     switch(input$l_fun,
-           "f(t) = sin(t/4)+2" = function(t) (sin(t/4)+2),
-           "f(t) = t" = function(t) t,
-           "f(t) = log(t)" = function(t) log(t)
+           "sin(t/4)+2" = function(t) (sin(t/4)+2),
+           "t" = function(t) t,
+           "log(t)" = function(t) log(t)
     )#end switch
   })#end l_calculation
   
@@ -90,7 +90,7 @@ shinyServer(function(input, output) {
                align = 'left',
                useHTML = T) %>%
       hc_add_theme(hc_theme_tufte()) %>%
-      hc_tooltip(headerFormat = '<small>t = {point.key}</small><table>',
+      hc_tooltip(headerFormat = 't: <b>{point.key}</b><table>',
                  pointFormat = '<tr><td>{series.name}:  </td><td style="text-align: right"><b>{point.y}</b></td></tr></table>',
                  useHTML = T
                  )
@@ -103,14 +103,14 @@ shinyServer(function(input, output) {
       hc_add_series(name = "P(X = x)", 
                     data = round(p_dist(),2), 
                     marker=list(enabled=F),
-                    type = "area") %>%
+                    type = "areaspline") %>%
       hc_yAxis(min = 0, max = 0.5) %>%
       hc_title(text = paste0(c("Poisson Distribution: &lambda;=",round(l_instance(),2)),collapse=""),
                align = "left",
                useHTML = T) %>%
       hc_add_theme(hc_theme_tufte()) %>%
-      hc_tooltip(headerFormat = paste0(c('For &lambda; = ',round(l_instance(),2),":"),collapse=""),
-                 pointFormat = '<table><tr><td>P(X = {point.x}): <b>{point.y}</b></td></tr></table>',
+      hc_tooltip(headerFormat = 'x: <b>{point.x}</b>',
+                 pointFormat = '<table><tr><td>P(X = x): <b>{point.y}</b></td></tr></table>',
                  useHTML = T)
   })#end highchart
   

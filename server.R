@@ -103,8 +103,9 @@ shinyServer(function(input, output) {
                align = "left",
                useHTML = T) %>%
       hc_add_theme(hc_theme_tufte()) %>%
-      hc_tooltip(headerFormat = '',
-                 pointFormat = '<table><tr><td>P(X = {point.x}): <b>{point.y}</b></td></tr></table>')
+      hc_tooltip(headerFormat = paste0(c('For &lambda; = ',round(l_instance(),2),":"),collapse=""),
+                 pointFormat = '<table><tr><td>P(X = {point.x}): <b>{point.y}</b></td></tr></table>',
+                 useHTML = T)
       # hc_chart(
       #   type = "spline"
       # )

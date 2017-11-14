@@ -68,31 +68,41 @@ shinyServer(function(input, output) {
     hc <- highchart() %>%
       hc_xAxis(plotLines = list(
                 list(
-                  label = list(text = paste0(c("Lambda: ", round(l_instance(),digits = 2)),collapse="")),
+                  label = list(text = paste0(c("&lambda;: ", round(l_instance(),digits = 2)),collapse=""),
+                               useHTML = T
+                               ),
                   color = "#FF0000",
                   width = 2,
                   value = t_instance()
                  ) 
                 )
                ) %>%
-      hc_add_series(name = 'Lambda', 
-                    data = l_values(),
-                    marker=list(enabled=F)) %>%
-      hc_title(text = "Lambda as a Function of Time",
-               align = 'left') %>%
+      hc_add_series(name = '&lambda;', 
+                    data = round(l_values(),2),
+                    marker=list(enabled=F),
+                    useHTML = T) %>%
+      hc_title(text = "&lambda; as a Function of Time",
+               align = 'left',
+               useHTML = T) %>%
       hc_exporting(enabled = T) %>%
-      hc_add_theme(hc_theme_tufte())
+      hc_add_theme(hc_theme_tufte()) %>%
+      hc_tooltip(headerFormat = '<small>t = {point.key}</small><table>',
+                 pointFormat = '<tr><td>{series.name}:  </td><td style="text-align: right"><b>{point.y}</b></td></tr></table>',
+                 useHTML = T
+                 )
   })
   
   output$p_dist_instance_hc <- renderHighchart({
     hc <- highchart() %>%
       hc_xAxis(seq(0,10)) %>%
       hc_add_series(name = "P(X = x)", 
-                    data = p_dist(), 
+                    data = round(p_dist(),2), 
                     marker=list(enabled=F),
                     type = "area") %>%
       hc_yAxis(min = 0, max = 0.5) %>%
-      hc_title(text = "Poisson Distribution",align = "left") %>%
+      hc_title(text = paste0(c("Poisson Distribution: &lambda;=",round(l_instance(),2)),collapse=""),
+               align = "left",
+               useHTML = T) %>%
       hc_add_theme(hc_theme_tufte())# %>%
       # hc_chart(
       #   type = "spline"

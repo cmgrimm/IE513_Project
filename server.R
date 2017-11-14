@@ -32,7 +32,7 @@ shinyServer(function(input, output) {
            "f(t) = t" = function(t) t,
            "f(t) = log(t)" = function(t) log(t)
     )#end switch
-  })#end l_
+  })#end l_calculation
   
   #calculate lambda over time
   l_values <- reactive({
@@ -48,7 +48,7 @@ shinyServer(function(input, output) {
   
   p_dist <- reactive({
     p_x <- dpois(seq(0,10),lambda = l_instance())
-    p_x
+    p_x #notice to get dpois(x,lambda) call p_x[x+1]
   })
   
   # Outputs -----------------------------------------------------------------

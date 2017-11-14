@@ -49,9 +49,10 @@ shinyUI(
 
                ),#end fluidRow
                fluidRow(
-                 highchartOutput("l_fun_hc"),#end highchartOutput 
+                 highchartOutput("l_fun_hc")#end highchartOutput 
+               ),#end fluidRow
+               fluidRow(
                  highchartOutput("p_dist_instance_hc")#end highchartOutput 
-                 
                )#end fluidRow
              )#end fluidPage
              

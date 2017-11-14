@@ -45,18 +45,18 @@ shinyServer(function(input, output) {
   #instance lambda
   l_instance <- reactive({
     l_function <- l_calculation()
-    l_function(t_instance())
+    l_function(t_instance()+1)#add one to get correct t, R has array base 1 and our array starts at t=0
   })
   
   #density values for poisson distribution at a given instance lambda 
   p_dist <- reactive({
     p_x <- dpois(seq(0,10),lambda = l_instance())
-    p_x #notice to get dpois(x,lambda) call p_x[x+1]
+    p_x #notice to get P(X=x) call p_x[x+1]
   })
   
   # Outputs -----------------------------------------------------------------
   
-  #render time instance slider, max value set by user
+  #render t_instance slider, max value set by user
   output$t_instance_ui <- renderUI({
     
     sliderInput("t_instance",

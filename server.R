@@ -84,7 +84,6 @@ shinyServer(function(input, output) {
       hc_title(text = "&lambda; as a Function of Time",
                align = 'left',
                useHTML = T) %>%
-      hc_exporting(enabled = T) %>%
       hc_add_theme(hc_theme_tufte()) %>%
       hc_tooltip(headerFormat = '<small>t = {point.key}</small><table>',
                  pointFormat = '<tr><td>{series.name}:  </td><td style="text-align: right"><b>{point.y}</b></td></tr></table>',

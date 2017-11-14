@@ -19,13 +19,15 @@ ipak <- function(pkg){
 
 ipak(packages)
 
+
 # Begin server ------------------------------------------------------------
 
 shinyServer(function(input, output) {
 
-  t_intervals <- reactive({ seq(1,input$t_max,1) })
+  t_intervals <- reactive({ seq(1,input$t_max,1) }) #time periods, max set by user
   t_instance <- reactive({ input$t_instance }) #time instance selected
   
+  #set the function of lambda
   l_calculation <- reactive({
     switch(input$l_fun,
            "f(t) = sin(t/4)+2" = function(t) (sin(t/4)+2),
@@ -46,6 +48,7 @@ shinyServer(function(input, output) {
     l_function(t_instance())
   })
   
+  #density values for poisson distribution at a given instance lambda 
   p_dist <- reactive({
     p_x <- dpois(seq(0,10),lambda = l_instance())
     p_x #notice to get dpois(x,lambda) call p_x[x+1]
@@ -53,6 +56,7 @@ shinyServer(function(input, output) {
   
   # Outputs -----------------------------------------------------------------
   
+  #render time instance slider, max value set by user
   output$t_instance_ui <- renderUI({
     
     sliderInput("t_instance",
@@ -62,8 +66,9 @@ shinyServer(function(input, output) {
                 value = 1,
                 step = 1)
     
-  })
+  })#end renderUI slider input
   
+  #render highchart of lambda over time given selected lambda function
   output$l_fun_hc <- renderHighchart({
     hc <- highchart() %>%
       hc_xAxis(plotLines = list(
@@ -89,8 +94,9 @@ shinyServer(function(input, output) {
                  pointFormat = '<tr><td>{series.name}:  </td><td style="text-align: right"><b>{point.y}</b></td></tr></table>',
                  useHTML = T
                  )
-  })
+  })#end highchart
   
+  #render poisson density function given an instance lambda
   output$p_dist_instance_hc <- renderHighchart({
     hc <- highchart() %>%
       hc_xAxis(seq(0,10)) %>%
@@ -106,13 +112,8 @@ shinyServer(function(input, output) {
       hc_tooltip(headerFormat = paste0(c('For &lambda; = ',round(l_instance(),2),":"),collapse=""),
                  pointFormat = '<table><tr><td>P(X = {point.x}): <b>{point.y}</b></td></tr></table>',
                  useHTML = T)
-      # hc_chart(
-      #   type = "spline"
-      # )
-      # 
-    
-  })
+  })#end highchart
   
-})
+})#end server
 
 

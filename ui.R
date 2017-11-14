@@ -19,6 +19,9 @@ ipak <- function(pkg){
 
 ipak(packages)
 
+
+# Begin UI ----------------------------------------------------------------
+
 shinyUI(
   fluidPage(
     titlePanel("Non-Homogenious Poisson Process"),

@@ -20,37 +20,38 @@ ipak <- function(pkg){
 ipak(packages)
 
 shinyUI(
-  navbarPage(
-    title = "Non-Homogenious Poisson Process",
-    tabPanel("Home",
+  fluidPage(
+    titlePanel = "Non-Homogenious Poisson Process",
              fluidPage(
-               sidebarLayout(
-                 sidebarPanel(
-                   
+               fluidRow(
+                 column(width = 4,
                    #select lambda function
                    selectInput("l_fun",
                                "Select Lambda Function:",
-                               c("f(t) = |sin(t)|","f(t) = t","f(t) = log(t)")
-                               ),#end selectInput
-                   sliderInput("t_instance",
-                               "Select t",
-                               min = 0,
-                               max = 100,
-                               value = 10
-                               )#end sliderInput
-                   
-                 ),#end sidebarPanel
-                 mainPanel(
-                   highchartOutput("l_fun_hc"),#end highchartOutput 
-                   textOutput("test")
-                 )#end mainPanel
+                               c("f(t) = sin(t/4)+2","f(t) = t","f(t) = |log(t)|")
+                               )#end selectInput
+                 ),#end column
+                 column(width = 4,
+                        numericInput("t_max",
+                                     "Select the Maximum Time",
+                                     min = 1,
+                                     max = 10000,
+                                     value = 1,
+                                     step = 1
+                        )#end numeric input t_instance
+                 ),#end column
+                 column(width = 4,
+                        uiOutput("t_instance_ui")#end uiOutput
+                 )#end column
+
+               ),#end fluidRow
+               fluidRow(
+                 highchartOutput("l_fun_hc"),#end highchartOutput 
+                 highchartOutput("p_dist_instance_hc")#end highchartOutput 
                  
-               )#end sidebarLayout
-               
+               )#end fluidRow
              )#end fluidPage
              
-    )#end tabPanel 'Home'
-    
   )#end navbarPage
   
 )#end shinyUI

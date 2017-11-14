@@ -102,7 +102,9 @@ shinyServer(function(input, output) {
       hc_title(text = paste0(c("Poisson Distribution: &lambda;=",round(l_instance(),2)),collapse=""),
                align = "left",
                useHTML = T) %>%
-      hc_add_theme(hc_theme_tufte())# %>%
+      hc_add_theme(hc_theme_tufte()) %>%
+      hc_tooltip(headerFormat = '',
+                 pointFormat = '<table><tr><td>P(X = {point.x}): <b>{point.y}</b></td></tr></table>')
       # hc_chart(
       #   type = "spline"
       # )

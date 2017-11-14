@@ -66,8 +66,7 @@ shinyServer(function(input, output) {
   
   output$l_fun_hc <- renderHighchart({
     hc <- highchart() %>%
-      hc_xAxis(#categories = t_intervals(),
-               plotLines = list(
+      hc_xAxis(plotLines = list(
                 list(
                   label = list(text = paste0(c("Lambda: ", round(l_instance(),digits = 2)),collapse="")),
                   color = "#FF0000",
@@ -93,7 +92,8 @@ shinyServer(function(input, output) {
                     marker=list(enabled=F),
                     type = "area") %>%
       hc_yAxis(min = 0, max = 0.5) %>%
-      hc_title(text = "Poisson Distribution",align = "left")# %>%
+      hc_title(text = "Poisson Distribution",align = "left") %>%
+      hc_add_theme(hc_theme_tufte())# %>%
       # hc_chart(
       #   type = "spline"
       # )

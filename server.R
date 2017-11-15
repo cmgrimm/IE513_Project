@@ -31,8 +31,9 @@ shinyServer(function(input, output) {
   l_calculation <- reactive({
     switch(input$l_fun,
            "sin(t/4)+2" = function(t) (sin(t/4)+2),
-           "t" = function(t) t,
-           "log(t)" = function(t) log(t)
+           "(1/t)+1" = function(t) (1/t)+1,
+           "log(t)" = function(t) log(t),
+           "custom" = function(t) eval(parse(text = input$l_fun_custom))
     )#end switch
   })#end l_calculation
   
@@ -93,7 +94,8 @@ shinyServer(function(input, output) {
       hc_tooltip(headerFormat = 't: <b>{point.key}</b><table>',
                  pointFormat = '<tr><td>{series.name}:  </td><td style="text-align: right"><b>{point.y}</b></td></tr></table>',
                  useHTML = T
-                 )
+                 ) %>%
+      hc_plotOptions(series=list(animation=F))
   })#end highchart
   
   #render poisson density function given an instance lambda

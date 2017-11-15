@@ -31,8 +31,13 @@ shinyUI(
                    #select lambda function
                    selectInput("l_fun",
                                HTML("Select &lambda;(t) Function:"),
-                               c("sin(t/4)+2","t","log(t)")
-                               )#end selectInput
+                               c("sin(t/4)+2","(1/t)+1","log(t)","[Custom]" = "custom")
+                               ),#end selectInput
+                   # Only show this panel if Custom is selected
+                   conditionalPanel(
+                     condition = "input.l_fun == 'custom'",
+                     textInput("l_fun_custom", HTML("Custom &lambda;(t) Function:"),value="log(4*t)")
+                   )
                  ),#end column
                  column(width = 4,
                         numericInput("t_max",

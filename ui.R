@@ -8,7 +8,8 @@
 
 packages <- c(
   "shiny",
-  "highcharter"
+  "highcharter",
+  "stats"
   )
 ipak <- function(pkg){
   new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
@@ -49,7 +50,8 @@ shinyUI(
                         )#end numeric input t_instance
                  ),#end column
                  column(width = 4,
-                        uiOutput("t_instance_ui")#end uiOutput
+                        uiOutput("t_instance_ui"),#end uiOutput
+                        textOutput("integral")
                  )#end column
 
                ),#end fluidRow

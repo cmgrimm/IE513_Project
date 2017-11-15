@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "\n# This is the user-interface definition of a Shiny web application.\n# You can find out more about building applications with Shiny here:\n#\n# http://shiny.rstudio.com\n#\n\n\npackages <- c(\n  \"shiny\",\n  \"highcharter\",\n  \"stats\"\n  )\nipak <- function(pkg){\n  new.pkg <- pkg[!(pkg %in% installed.packages()[, \"Package\"])]\n  if (length(new.pkg)) \n    install.packages(new.pkg, dependencies = TRUE)\n  sapply(pkg, require, character.only = TRUE)\n}\n\nipak(packages)\n\n\n# Begin UI ----------------------------------------------------------------\n\nshinyUI(\n  fluidPage(\n    titlePanel(\"Non-Homogenious Poisson Process\"),\n             fluidPage(\n               fluidRow(\n                 column(width = 4,\n                   #select lambda function\n                   selectInput(\"l_fun\",\n                               HTML(\"Select &lambda;(t) Function:\"),\n                               c(\"sin(t/4)+2\",\"(1/t)+1\",\"log(t)\",\"[Custom]\" = \"custom\")\n                               ),#end selectInput\n                   # Only show this panel if Custom is selected\n                   conditionalPanel(\n                     condition = \"input.l_fun == 'custom'\",\n                     textInput(\"l_fun_custom\", HTML(\"Custom &lambda;(t) Function:\"),value=\"log(4*t)\")\n                   )\n                 ),#end column\n                 column(width = 4,\n                        numericInput(\"t_max\",\n                                     \"Select the Maximum Time\",\n                                     min = 1,\n                                     max = 10000,\n                                     value = 50,\n                                     step = 1\n                        )#end numeric input t_instance\n                 ),#end column\n                 column(width = 4,\n                        uiOutput(\"t_instance_ui\"),#end uiOutput\n                        textOutput(\"integral\")\n                 )#end column\n\n               ),#end fluidRow\n               fluidRow(\n                 highchartOutput(\"l_fun_hc\")#end highchartOutput \n               ),#end fluidRow\n               fluidRow(\n                 highchartOutput(\"p_dist_instance_hc\")#end highchartOutput \n               )#end fluidRow\n             )#end fluidPage\n             \n  )#end navbarPage\n  \n)#end shinyUI\n",
+    "created" : 1510774866624.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3337640453",
+    "id" : "3950AE3D",
+    "lastKnownWriteTime" : 1510777743,
+    "last_content_update" : 1510777743846,
+    "path" : "//my.files.iastate.edu/Users/cmgrimm/Desktop/GitHub/IE513_Project/ui.R",
+    "project_path" : "ui.R",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

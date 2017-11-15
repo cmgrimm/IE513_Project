@@ -7,7 +7,8 @@
 
 packages <- c(
   "shiny",
-  "highcharter"
+  "highcharter",
+  "stats"
 )
 
 ipak <- function(pkg){
@@ -115,6 +116,11 @@ shinyServer(function(input, output) {
                  pointFormat = '<table><tr><td>P(X = x): <b>{point.y}</b></td></tr></table>',
                  useHTML = T)
   })#end highchart
+  
+  output$integral <- renderText({
+    l_function <- l_calculation()
+    integrate(Vectorize(l_function), lower = 0, upper = t_instance())
+  })
   
 })#end server
 

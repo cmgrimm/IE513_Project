@@ -102,7 +102,16 @@ shinyServer(function(input, output) {
   #render poisson density function given an instance lambda
   output$p_dist_instance_hc <- renderHighchart({
     hc <- highchart() %>%
-      hc_xAxis(seq(0,10)) %>%
+      hc_xAxis(plotLines = list(
+                 list(
+                   label = list(text = paste0(c("&mu;: ", round(l_instance(),digits = 2)),collapse=""),
+                                useHTML = T
+                   ),
+                   color = "#FF0000",
+                   width = 2,
+                   value = l_instance()
+                 ) 
+               )) %>%
       hc_add_series(name = "P(X = x)", 
                     data = round(p_dist(),2), 
                     marker=list(enabled=F),
@@ -117,9 +126,17 @@ shinyServer(function(input, output) {
                  useHTML = T)
   })#end highchart
   
-  output$integral <- renderText({
-    l_function <- l_calculation()
-    integrate(Vectorize(l_function), lower = 0, upper = t_instance())
+  output$integral <- renderUI({
+    t <- t_instance()
+    value <- round(integrate(l_calculation(), lower = 1e-29, upper = t, subdivisions = t*50)$value,2)
+    eq <- if(input$l_fun != "custom") {
+      input$l_fun
+    } else {
+      input$l_fun_custom
+    }
+    withMathJax(
+      sprintf(paste0("$$\\int_{0}^{",t,"}[",eq,"]dt = ",value,"$$"))
+    )
   })
   
 })#end server

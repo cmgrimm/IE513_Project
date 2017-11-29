@@ -26,7 +26,8 @@ ipak(packages)
 shinyServer(function(input, output) {
 
   t_intervals <- reactive({ seq(1,input$t_max,1) }) #time periods, max set by user
-  t_instance <- reactive({ input$t_instance }) #time instance selected
+  t_instance <- reactive({ input$t_range[1] }) #time instance selected
+  s_instance <- reactive({ input$t_range[2] }) #time instance selected
   
   #set the function of lambda
   l_calculation <- reactive({
@@ -44,7 +45,13 @@ shinyServer(function(input, output) {
     l_function(t_intervals())
   })
   
-  #instance lambda
+  #instance lambda at s
+  l_instance_s <- reactive({
+    l_function <- l_calculation()
+    l_function(s_instance()+1)#add one to get correct t, R has array base 1 and our array starts at t=0
+  })
+  
+  #instance lambda at t
   l_instance <- reactive({
     l_function <- l_calculation()
     l_function(t_instance()+1)#add one to get correct t, R has array base 1 and our array starts at t=0
@@ -58,14 +65,14 @@ shinyServer(function(input, output) {
   
   # Outputs -----------------------------------------------------------------
   
-  #render t_instance slider, max value set by user
-  output$t_instance_ui <- renderUI({
+  #render s_instance slider, max value set by user
+  output$t_range_ui <- renderUI({
     
-    sliderInput("t_instance",
-                "Select a Time Instance",
+    sliderInput("t_range",
+                "Select a Time Interval",
                 min = 1,
                 max = input$t_max,
-                value = 1,
+                value = c(1, input$t_max),
                 step = 1)
     
   })#end renderUI slider input
@@ -81,7 +88,15 @@ shinyServer(function(input, output) {
                   color = "#FF0000",
                   width = 2,
                   value = t_instance()
-                 ) 
+                 ),
+                list(
+                  label = list(text = paste0(c("&lambda;: ", round(l_instance_s(),digits = 2)),collapse=""),
+                               useHTML = T
+                  ),
+                  color = "#FF0000",
+                  width = 2,
+                  value = s_instance()
+                )
                 )
                ) %>%
       hc_add_series(name = '&lambda;', 
@@ -100,7 +115,7 @@ shinyServer(function(input, output) {
   })#end highchart
   
   #render poisson density function given an instance lambda
-  output$p_dist_instance_hc <- renderHighchart({
+  output$p_diss_instance_hc <- renderHighchart({
     hc <- highchart() %>%
       hc_xAxis(plotLines = list(
                  list(
@@ -128,14 +143,18 @@ shinyServer(function(input, output) {
   
   output$integral <- renderUI({
     t <- t_instance()
-    value <- round(integrate(l_calculation(), lower = 1e-29, upper = t, subdivisions = t*50)$value,2)
+    s <- s_instance()
+    
+    value <- round(integrate(f = l_calculation(), lower = t, upper = s, subdivisions = 1000)$value,2)
+    
     eq <- if(input$l_fun != "custom") {
       input$l_fun
     } else {
       input$l_fun_custom
     }
+    
     withMathJax(
-      sprintf(paste0("$$\\int_{0}^{",t,"}[",eq,"]dt = ",value,"$$"))
+      sprintf(paste0("$$\\int_{",t,"}^{",s,"}[",eq,"]dt = ",value,"$$"))
     )
   })
   

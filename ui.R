@@ -26,7 +26,7 @@ ipak(packages)
 shinyUI(
   fluidPage(
     titlePanel("Non-Homogenious Poisson Process"),
-    withMathJax(),
+             fluidPage(
                fluidRow(
                  column(width = 4,
                    #select lambda function
@@ -37,20 +37,20 @@ shinyUI(
                    # Only show this panel if Custom is selected
                    conditionalPanel(
                      condition = "input.l_fun == 'custom'",
-                     textInput("l_fun_custom", HTML("Custom &lambda;(t) Function:"),value="cos(t/4)")
+                     textInput("l_fun_custom", HTML("Custom &lambda;(t) Function:"),value="sin(log(t/2))")
                    )
                  ),#end column
                  column(width = 4,
                         numericInput("t_max",
                                      "Select the Maximum Time",
-                                     min = 1,
+                                     min = 5,
                                      max = 10000,
-                                     value = 25,
+                                     value = 50,
                                      step = 1
                         )#end numeric input t_instance
                  ),#end column
                  column(width = 4,
-                        uiOutput("t_instance_ui"),#end uiOutput
+                        uiOutput("t_range_ui"),#end uiOutput
                         uiOutput("integral")
                  )#end column
 
@@ -61,7 +61,8 @@ shinyUI(
                fluidRow(
                  highchartOutput("p_dist_instance_hc")#end highchartOutput 
                )#end fluidRow
-
-  )#end fluidPage
+             )#end fluidPage
+             
+  )#end navbarPage
   
 )#end shinyUI

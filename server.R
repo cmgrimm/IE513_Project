@@ -115,7 +115,7 @@ shinyServer(function(input, output) {
   })#end highchart
   
   #render poisson density function given an instance lambda
-  output$p_diss_instance_hc <- renderHighchart({
+  output$p_dist_instance_hc <- renderHighchart({
     hc <- highchart() %>%
       hc_xAxis(plotLines = list(
                  list(

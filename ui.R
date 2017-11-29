@@ -53,7 +53,6 @@ shinyUI(
                         uiOutput("t_range_ui"),#end uiOutput
                         uiOutput("integral")
                  )#end column
-
                ),#end fluidRow
                fluidRow(
                  highchartOutput("l_fun_hc")#end highchartOutput 

@@ -23,11 +23,11 @@ ipak(packages)
 
 # Begin UI ----------------------------------------------------------------
 
-shinyUI(navbarPage("Non-Homogenious Poisson Process",
-  tabPanel("NHPP Setup",
-             fluidPage(
-               fluidRow(
-                 column(width = 4,
+shinyUI(fluidPage(
+  titlePanel("Non-Homogeneous Poisson Process"),
+  sidebarLayout(
+               sidebarPanel(
+                 fluidRow(
                    #select lambda function
                    selectInput("l_fun",
                                HTML("Select &lambda;(t) Function:"),
@@ -39,7 +39,7 @@ shinyUI(navbarPage("Non-Homogenious Poisson Process",
                      textInput("l_fun_custom", HTML("Custom &lambda;(t) Function:"),value="sin(log(t/2))")
                    )
                  ),#end column
-                 column(width = 4,
+                 fluidRow(
                         numericInput("t_max",
                                      "Select the Maximum Time",
                                      min = 5,
@@ -48,24 +48,23 @@ shinyUI(navbarPage("Non-Homogenious Poisson Process",
                                      step = 1
                         )#end numeric input t_instance
                  ),#end column
-                 column(width = 4,
+                 fluidRow(
                         uiOutput("t_range_ui")#end uiOutput
                  )#end column
-               ),#end fluidRow
-               fluidRow(
-                 uiOutput("integrals")
-               ),#end fluidRow
-               fluidRow(
-                 highchartOutput("l_fun_hc")#end highchartOutput 
-               ),#end fluidRow
-               fluidRow(
-                 highchartOutput("p_dist_range_hc")#end highchartOutput 
-               )#end fluidRow
-             )#end fluidPage
-             
-  ),#end tabPanel 'Process Setup'
-  tabPanel("Simulation"
-  )#end tabPanel 'Simulation'
-)#end navbarPage
+               ),#end sidebarPanel
+               
+               mainPanel(
+                 tabsetPanel(
+                   tabPanel("Equations", uiOutput("equations")),
+                   tabPanel("Theoreticl Graphs",
+                            highchartOutput("l_fun_hc"),#end highchartOutput 
+                            highchartOutput("p_dist_range_hc")#end highchartOutput 
+                            ),
+                   tabPanel("Simulation")
+                 )#end tabsetPanel
+               )#end mainPanel
+
+  )#end sidebarLayout
+)#end fluidPage
   
 )#end shinyUI

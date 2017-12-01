@@ -211,17 +211,19 @@ shinyServer(function(input, output) {
   })#end highchart
   
   
-  output$integrals <- renderUI({
+  output$equations <- renderUI({
     t <- t_instance()
     s <- s_instance()
     eq <- eq()
     value <- mean_value()
-    
+    tot <- substr(as.character(round(sum(p_dist()),5)),1,6)
+
     withMathJax(
       sprintf(
         paste0(
           "$$E[N(",t,",",s,")]=\\int_{",t,"}^{",s,"}[",eq,"]dt = ",value,"$$ 
-          $$P(N(",t,",",s,") = n) = \\frac{(\\int_{",t,"}^{",s,"}[",eq,"]dt)^{n}*e^{\\int_{",t,"}^{",s,"}[",eq,"]dt}}{n!}$$"
+          $$P(N(",t,",",s,") = n) = \\frac{(\\int_{",t,"}^{",s,"}[",eq,"]dt)^{n}*e^{\\int_{",t,"}^{",s,"}[",eq,"]dt}}{n!}$$
+          $$\\sum_{n=0}^{\\infty}P(N(",t,",",s,") = n)=",tot,"$$"
         )
       )
     )

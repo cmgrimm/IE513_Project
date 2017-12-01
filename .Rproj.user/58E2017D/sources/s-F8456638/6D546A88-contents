@@ -38,7 +38,7 @@ shinyUI(fluidPage(
                      condition = "input.l_fun == 'custom'",
                      textInput("l_fun_custom", HTML("Custom &lambda;(t) Function:"),value="sin(log(t/2))")
                    )
-                 ),#end column
+                 ),#end fluidRow
                  fluidRow(
                         numericInput("t_max",
                                      "Select the Maximum Time",
@@ -47,10 +47,18 @@ shinyUI(fluidPage(
                                      value = 25,
                                      step = 1
                         )#end numeric input t_instance
-                 ),#end column
+                 ),#end fluidRow
                  fluidRow(
                         uiOutput("t_range_ui")#end uiOutput
-                 )#end column
+                 ),#end fluidRow
+                 fluidRow(
+                   numericInput("trials",
+                                "Simulation Trials",
+                                min = 10,
+                                max = 5000,
+                                value = 100,
+                                step = 1)
+                 )
                ),#end sidebarPanel
                
                mainPanel(

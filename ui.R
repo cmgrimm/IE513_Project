@@ -23,9 +23,8 @@ ipak(packages)
 
 # Begin UI ----------------------------------------------------------------
 
-shinyUI(
-  fluidPage(
-    titlePanel("Non-Homogenious Poisson Process"),
+shinyUI(navbarPage("Non-Homogenious Poisson Process",
+  tabPanel("NHPP Setup",
              fluidPage(
                fluidRow(
                  column(width = 4,
@@ -44,8 +43,8 @@ shinyUI(
                         numericInput("t_max",
                                      "Select the Maximum Time",
                                      min = 5,
-                                     max = 10000,
-                                     value = 50,
+                                     max = 100,
+                                     value = 25,
                                      step = 1
                         )#end numeric input t_instance
                  ),#end column
@@ -58,10 +57,13 @@ shinyUI(
                  highchartOutput("l_fun_hc")#end highchartOutput 
                ),#end fluidRow
                fluidRow(
-                 highchartOutput("p_dist_instance_hc")#end highchartOutput 
+                 highchartOutput("p_dist_range_hc")#end highchartOutput 
                )#end fluidRow
              )#end fluidPage
              
-  )#end navbarPage
+  ),#end tabPanel 'Process Setup'
+  tabPanel("Simulation"
+  )#end tabPanel 'Simulation'
+)#end navbarPage
   
 )#end shinyUI

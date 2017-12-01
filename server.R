@@ -20,6 +20,47 @@ ipak <- function(pkg){
 
 ipak(packages)
 
+#simulation function for a non homogeneous poisson process
+nhpp_sim <- function(start,end,trials,l_func){
+  k=1 #index for getting arrival times
+  Customers <- NA #total arrival count from t to s
+  arrivalTimes <- NA #time of arrival
+  
+  j=1
+  while(j<trials+1){#Runs defined number of simulations
+    arrivalvalue=0
+    arrivals <- NA #array of arrivals
+    i = 1 #used for indexing
+    t <- start
+    s <- end
+    
+    while (t < s) {
+      #lambda to be changed between options
+      l_value <- l_func(t) #lambda value
+      arrivalvalue<-rexp(1,rate=l_value)
+      #Jumps by incriments of .01 seconds, if the arrival occured in that time frame, document it
+      if(arrivalvalue > .01) t=t+.01 else t=t+arrivalvalue
+      if(arrivalvalue > .01){
+        arrivals[i] <- NA
+      } else {
+        arrivals[i] <- t
+        if(j==1){
+          arrivalTimes[k]<-t
+          k<-k+1
+        }
+      }
+      i <- i +1
+    }#End while s<t
+    
+    #Count of number of arrivals in duration
+    N=length(arrivals[!is.na(arrivals)])
+    Customers[j] <- N
+    j=j+1 #Move to next simulation (of 100)
+  }#End while j<101
+  return(Customers)
+}
+
+
 
 # Begin server ------------------------------------------------------------
 
@@ -44,7 +85,7 @@ shinyServer(function(input, output) {
     l_function <- l_calculation()
     l_function(t_intervals())
   })
-  
+
   #instance lambda at s
   l_instance_s <- reactive({
     l_function <- l_calculation()
@@ -56,11 +97,39 @@ shinyServer(function(input, output) {
     l_function <- l_calculation()
     l_function(t_instance()+1)#add one to get correct t, R has array base 1 and our array starts at t=0
   })
+
+  #get lambda function as string
+  eq <- reactive({
+    if(input$l_fun != "custom") {
+      input$l_fun
+    } else {
+      input$l_fun_custom
+    }
+  })
   
-  #density values for poisson distribution at a given instance lambda 
+  mean_value <- reactive({
+    t <- t_instance()
+    s <- s_instance()
+    
+    value <- round(integrate(f = l_calculation(), lower = t, upper = s, subdivisions = 1000)$value,2)
+    value
+  })
+  
+  #distribution from t to s given lambda(t)
   p_dist <- reactive({
-    p_x <- dpois(seq(0,10),lambda = l_instance())
-    p_x #notice to get P(X=x) call p_x[x+1]
+    max <- mean_value() + 30
+    x <- rep(NA,max)
+    f <- function(t,s,n) {
+      ((integrate(f=l_calculation(),lower = t,upper = s)$value)^n) * 
+        exp(-integrate(f=l_calculation(),lower = t,upper = s)$value) /
+        factorial(n)
+    }
+    
+    for(i in 1:max){
+      x[i] <- f(t_instance(),s_instance(),i)
+    }
+    x
+    
   })
   
   # Outputs -----------------------------------------------------------------
@@ -72,7 +141,7 @@ shinyServer(function(input, output) {
                 "Select a Time Interval",
                 min = 1,
                 max = input$t_max,
-                value = c(1, input$t_max),
+                value = c(1, (input$t_max-1)),
                 step = 1)
     
   })#end renderUI slider input
@@ -103,6 +172,10 @@ shinyServer(function(input, output) {
                     data = round(l_values(),2),
                     marker=list(enabled=F),
                     useHTML = T) %>%
+      # hc_add_series(name = '&lambda;', 
+      #               data = round(l_values(),2),
+      #               marker=list(enabled=F),
+      #               useHTML = T) %>%
       hc_title(text = "&lambda; as a Function of Time",
                align = 'left',
                useHTML = T) %>%
@@ -115,16 +188,16 @@ shinyServer(function(input, output) {
   })#end highchart
   
   #render poisson density function given an instance lambda
-  output$p_dist_instance_hc <- renderHighchart({
+  output$p_dist_range_hc <- renderHighchart({
     hc <- highchart() %>%
       hc_xAxis(plotLines = list(
                  list(
-                   label = list(text = paste0(c("&mu;: ", round(l_instance(),digits = 2)),collapse=""),
+                   label = list(text = paste0(c("&mu;: ", round(mean_value(),digits = 2)),collapse=""),
                                 useHTML = T
                    ),
                    color = "#FF0000",
                    width = 2,
-                   value = l_instance()
+                   value = mean_value()
                  ) 
                )) %>%
       hc_add_series(name = "P(X = x)", 
@@ -132,7 +205,7 @@ shinyServer(function(input, output) {
                     marker=list(enabled=F),
                     type = "areaspline") %>%
       hc_yAxis(min = 0, max = 0.5) %>%
-      hc_title(text = paste0(c("Poisson Distribution: &lambda;=",round(l_instance(),2)),collapse=""),
+      hc_title(text = paste0(c("P(N(",t_instance(),",",s_instance(),") = x) when &lambda;(t) = ",eq()),collapse="",sep=""),
                align = "left",
                useHTML = T) %>%
       hc_add_theme(hc_theme_tufte()) %>%
@@ -145,16 +218,12 @@ shinyServer(function(input, output) {
     t <- t_instance()
     s <- s_instance()
     
-    value <- round(integrate(f = l_calculation(), lower = t, upper = s, subdivisions = 1000)$value,2)
+    value <- mean_value()
     
-    eq <- if(input$l_fun != "custom") {
-      input$l_fun
-    } else {
-      input$l_fun_custom
-    }
+    eq <- eq()
     
     withMathJax(
-      sprintf(paste0("$$\\int_{",t,"}^{",s,"}[",eq,"]dt = ",value,"$$"))
+      sprintf(paste0("$$E[N(",t,",",s,")]=\\int_{",t,"}^{",s,"}[",eq,"]dt = ",value,"$$"))
     )
   })
   

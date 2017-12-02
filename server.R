@@ -133,6 +133,8 @@ shinyServer(function(input, output) {
     
   })
 
+  #simulated data
+  
   
   #sim_freq for plot
   sim_freq <- eventReactive(input$simulate, {
@@ -245,14 +247,25 @@ shinyServer(function(input, output) {
   output$sim_hist <- renderHighchart({
     
     hc <- highchart() %>%
-      #hc_xAxis(categories = 1:max(sim_list())) %>%
+      hc_xAxis(plotLines = list(
+        list(
+          label = list(text = paste0(c("&mu;: ", round(mean_value(),digits = 2)),collapse=""),
+                       useHTML = T
+          ),
+          color = "#FF0000",
+          width = 2,
+          value = mean_value()
+        ) 
+      )) %>%
       hc_add_series(name = "Simulated Data",
                     data = sim_freq(),
                     type = "column") %>%
       hc_add_series(name = "P(X = x)", 
                     data = round(p_dist(),2), 
                     marker=list(enabled=F),
-                    type = "line")
+                    type = "line",
+                    color = "#FF0000") %>%
+      hc_tooltip(shared = TRUE)
       
   })
   

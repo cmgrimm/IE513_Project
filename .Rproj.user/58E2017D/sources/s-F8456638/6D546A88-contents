@@ -9,7 +9,8 @@
 packages <- c(
   "shiny",
   "highcharter",
-  "stats"
+  "stats",
+  "shinyjs"
   )
 ipak <- function(pkg){
   new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
@@ -55,20 +56,29 @@ shinyUI(fluidPage(
                    numericInput("trials",
                                 "Simulation Trials",
                                 min = 10,
-                                max = 5000,
+                                max = 500,
                                 value = 100,
                                 step = 1)
                  )
                ),#end sidebarPanel
                
                mainPanel(
+                 inlineCSS(".btn { margin-top: 10px;
+                                   margin-bottom: 50px }"),
                  tabsetPanel(
                    tabPanel("Equations", uiOutput("equations")),
                    tabPanel("Theoreticl Graphs",
                             highchartOutput("l_fun_hc"),#end highchartOutput 
                             highchartOutput("p_dist_range_hc")#end highchartOutput 
                             ),
-                   tabPanel("Simulation")
+                   tabPanel("Simulation",
+                              fluidRow(
+                                actionButton("simulate","Run Simulation")
+                              ),
+                              fluidRow(
+                                highchartOutput("sim_hist")
+                              )
+                            )
                  )#end tabsetPanel
                )#end mainPanel
 

@@ -8,7 +8,8 @@
 packages <- c(
   "shiny",
   "highcharter",
-  "stats"
+  "stats",
+  "shinyjs"
 )
 
 ipak <- function(pkg){
@@ -131,6 +132,16 @@ shinyServer(function(input, output) {
     x
     
   })
+
+  
+  #sim_freq for plot
+  sim_freq <- eventReactive(input$simulate, {
+    sim_list <- nhpp_sim(t_instance(),s_instance(),input$trials,l_calculation())
+    x <- data.frame(sim_list = seq(1,max(sim_list)))
+    x2 <- merge(x,table(sim_list),all = T)
+    x2[is.na(x2)] <- 0
+    x2$Freq / input$trials
+  })
   
   # Outputs -----------------------------------------------------------------
   
@@ -183,7 +194,7 @@ shinyServer(function(input, output) {
       hc_plotOptions(series=list(animation=F))
   })#end highchart
   
-  #render poisson density function given an instance lambda
+  #render poisson density function given a range of time
   output$p_dist_range_hc <- renderHighchart({
     hc <- highchart() %>%
       hc_xAxis(plotLines = list(
@@ -210,7 +221,7 @@ shinyServer(function(input, output) {
                  useHTML = T)
   })#end highchart
   
-  
+  #render theoretical equations
   output$equations <- renderUI({
     t <- t_instance()
     s <- s_instance()
@@ -229,6 +240,22 @@ shinyServer(function(input, output) {
     )
     
   })
+  
+  #render simulation histogram
+  output$sim_hist <- renderHighchart({
+    
+    hc <- highchart() %>%
+      #hc_xAxis(categories = 1:max(sim_list())) %>%
+      hc_add_series(name = "Simulated Data",
+                    data = sim_freq(),
+                    type = "column") %>%
+      hc_add_series(name = "P(X = x)", 
+                    data = round(p_dist(),2), 
+                    marker=list(enabled=F),
+                    type = "line")
+      
+  })
+  
   
 })#end server
 

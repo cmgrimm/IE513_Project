@@ -88,17 +88,36 @@ shinyServer(function(input, output) {
     l_function <- l_calculation()
     l_function(t_intervals())
   })
+  
+  #lambda until t
+  l_values_1 <- reactive({
+    l_values <- l_values()
+    l_values[1:t_instance()]
+  })
+  
+  #lambda from t to to s
+  l_values_2 <- reactive({
+    l_values <- l_values()
+    l_values[t_instance():s_instance()]
+  })
 
+  #lambda from s to end
+  l_values_3 <- reactive({
+    l_values <- l_values()
+    l_values[s_instance():length(l_values)]
+  })
+  
+  
   #instance lambda at s
   l_instance_s <- reactive({
     l_function <- l_calculation()
-    l_function(s_instance()+1)#add one to get correct t, R has array base 1 and our array starts at t=0
+    l_function(s_instance())
   })
   
   #instance lambda at t
   l_instance <- reactive({
     l_function <- l_calculation()
-    l_function(t_instance()+1)#add one to get correct t, R has array base 1 and our array starts at t=0
+    l_function(t_instance())
   })
 
   #get lambda function as string
@@ -214,6 +233,7 @@ shinyServer(function(input, output) {
     x <- c(min(sim_arrivalTimes$x)-1,max(sim_arrivalTimes$x)+1)
     y <- intercept + x * x_variable
     xy <- data.frame(x = x, y = y)
+    return(xy)
   })
   
   
@@ -227,7 +247,7 @@ shinyServer(function(input, output) {
                 "Select a Time Interval",
                 min = 1,
                 max = input$t_max,
-                value = c(1, (input$t_max-1)),
+                value = c(1, input$t_max),
                 step = 1)
     
   })#end renderUI slider input
@@ -255,9 +275,26 @@ shinyServer(function(input, output) {
                 )
                ) %>%
       hc_add_series(name = '&lambda;', 
-                    data = round(l_values(),2),
+                    data = round(l_values_1(),2),
                     marker=list(enabled=F),
-                    useHTML = T) %>%
+                    useHTML = T,
+                    pointStart = 1,
+                    type = "spline",
+                    color = "rgba(115, 115, 115, 0.75)") %>%
+      hc_add_series(name = '&lambda;', 
+                    data = round(l_values_2(),2),
+                    marker=list(enabled=F),
+                    useHTML = T,
+                    pointStart = t_instance(),
+                    type = "areaspline",
+                    color = "rgba(115, 115, 115, 0.75)") %>%
+      hc_add_series(name = '&lambda;', 
+                    data = round(l_values_3(),2),
+                    marker=list(enabled=F),
+                    useHTML = T,
+                    pointStart = s_instance(),
+                    type = "spline",
+                    color = "rgba(115, 115, 115, 0.75)") %>%
       hc_title(text = "&lambda; as a Function of Time",
                align = 'left',
                useHTML = T) %>%
@@ -286,7 +323,7 @@ shinyServer(function(input, output) {
                     data = round(p_dist(),2), 
                     marker=list(enabled=F),
                     type = "areaspline") %>%
-      hc_yAxis(min = 0, max = 0.5) %>%
+      hc_yAxis(min = 0, max = 0.3) %>%
       hc_title(text = paste0(c("P(N(",t_instance(),",",s_instance(),") = x) when &lambda;(t) = ",eq()),collapse="",sep=""),
                align = "left",
                useHTML = T) %>%

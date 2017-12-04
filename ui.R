@@ -38,7 +38,7 @@ shinyUI(fluidPage(
                    # Only show this panel if Custom is selected
                    conditionalPanel(
                      condition = "input.l_fun == 'custom'",
-                     textInput("l_fun_custom", HTML("Custom &lambda;(t) Function:"),value="sin(log(t/2))")
+                     textInput("l_fun_custom", HTML("Custom &lambda;(t) Function:"),value="sin(log(t/2))+1")
                    )
                  ),#end fluidRow
                  fluidRow(

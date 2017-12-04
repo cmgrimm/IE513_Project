@@ -68,7 +68,7 @@ shinyUI(fluidPage(
                            .MathJax { font-size: 3em; }"),
                  tabsetPanel(
                    tabPanel("Equations", uiOutput("equations")),
-                   tabPanel("Theoreticl Graphs",
+                   tabPanel("Theoretical Graphs",
                             highchartOutput("l_fun_hc"),#end highchartOutput 
                             highchartOutput("p_dist_range_hc")#end highchartOutput 
                             ),

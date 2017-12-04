@@ -360,19 +360,21 @@ shinyServer(function(input, output) {
                     data = sim_lm_data(),
                     marker=list(enabled=F),
                     type = "line",
-                    label = list(
-                      text = "hi"
-                    )) %>%
+                    enableMouseTracking = F
+                    ) %>%
       hc_xAxis(title = list(text = "Events between t and (t+s)/2")) %>%
       hc_yAxis(title = list(text = "Events bewteen (t+s)/2 and s")) %>%
       hc_annotations(list(
         xValue = sim_lm_data()[1,1]+1,
-        yValue = max(sim_arrivalTimes()[2]),
+        yValue = max(sim_lm_data()[1,2]+2),
         title = list(text =
           paste0("y=",round(sim_lm()[2],1),"*x+",round(sim_lm()[1],1),"<br />","R^2=",round(sim_lm()[3],3))
           ),
         useHTML = T
-      ))
+      )) %>%
+      hc_tooltip(headerFormat = 'First Half: <b>{point.x} events</b>',
+                 pointFormat = '<table><tr><td>Second Half: <b>{point.y} events</b></td></tr></table>',
+                 useHTML = T)
     
   })
   

@@ -25,7 +25,7 @@ ipak(packages)
 nhpp_sim <- function(start,end,trials,l_func){
   k=1 #index for getting arrival times
   Customers <- NA #total arrival count from t to s
-  arrivalTimes <- NA #time of arrival
+  arrivalTimes <- vector("list",trials) #time of arrival
   
   j=1
   while(j<trials+1){#Runs defined number of simulations
@@ -44,21 +44,21 @@ nhpp_sim <- function(start,end,trials,l_func){
       if(arrivalvalue > .01){
         arrivals[i] <- NA
       } else {
-        arrivals[i] <- t
-        if(j==1){
-          arrivalTimes[k]<-t
-          k<-k+1
-        }
+        arrivals[i] <- t #store arrival times
+        k<-k+1
       }
       i <- i +1
     }#End while s<t
+    
+    #store arrival times
+    arrivalTimes[[j]] <- arrivals[!is.na(arrivals)]
     
     #Count of number of arrivals in duration
     N=length(arrivals[!is.na(arrivals)])
     Customers[j] <- N
     j=j+1 #Move to next simulation (of 100)
   }#End while j<101
-  return(Customers)
+  return(list(start = start, end = end, trials = trials, eventTotals = Customers,arrivals = arrivalTimes))
 }
 
 
@@ -134,16 +134,33 @@ shinyServer(function(input, output) {
   })
 
   #simulated data
-  
+  sim_data <- eventReactive(input$simulate, {
+    nhpp_sim(t_instance(),s_instance(),input$trials,l_calculation())
+  })
   
   #sim_freq for plot
-  sim_freq <- eventReactive(input$simulate, {
-    sim_list <- nhpp_sim(t_instance(),s_instance(),input$trials,l_calculation())
+  sim_freq <- reactive({
+    sim_list <- sim_data()
+    sim_list <- sim_list$eventTotals
     x <- data.frame(sim_list = seq(1,max(sim_list)))
     x2 <- merge(x,table(sim_list),all = T)
     x2[is.na(x2)] <- 0
-    x2$Freq / input$trials
+    x2$Freq / sim_list$trials
   })
+  
+  #sim 0-(t/2) for independance test
+  sim_arrivalTimes <- reactive({
+    sim_data <- sim_data()
+    t <- sim_data$start
+    s <- sim_data$end
+    mid_time <- t + ((s-t)/2)
+    sim_times <- sim_data$arrivals #List of arrival times for each simulation
+    
+    
+    
+    
+  })
+  
   
   # Outputs -----------------------------------------------------------------
   
@@ -267,6 +284,12 @@ shinyServer(function(input, output) {
                     color = "#FF0000") %>%
       hc_tooltip(shared = TRUE)
       
+  })
+  
+  output$sim_independance <- renderHighchart({
+    
+    
+    
   })
   
   

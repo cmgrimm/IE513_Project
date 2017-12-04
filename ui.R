@@ -77,6 +77,9 @@ shinyUI(fluidPage(
                               ),
                               fluidRow(
                                 highchartOutput("sim_hist")
+                              ),
+                              fluidRow(
+                                highchartOutput("sim_independance")
                               )
                             )
                  )#end tabsetPanel

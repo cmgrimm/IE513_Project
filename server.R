@@ -155,7 +155,11 @@ shinyServer(function(input, output) {
     s <- sim_data$end
     mid_time <- t + ((s-t)/2)
     sim_times <- sim_data$arrivals #List of arrival times for each simulation
-    
+    z <- lapply(sim_times, function(x) {
+            first_half <- x[x <= mid_time]
+            second_half <- x[x > mid_time]
+            y <- data.frame(x = length(first_half), y = length(second_half))
+          })
     
     
     

@@ -67,6 +67,8 @@ nhpp_sim <- function(start,end,trials,l_func){
 
 shinyServer(function(input, output) {
 
+  options(shiny.sanitize.errors = FALSE)
+  
   t_intervals <- reactive({ seq(1,input$t_max,1) }) #time periods, max set by user
   t_instance <- reactive({ input$t_range[1] }) #time instance selected
   s_instance <- reactive({ input$t_range[2] }) #time instance selected

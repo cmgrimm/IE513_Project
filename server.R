@@ -140,15 +140,38 @@ shinyServer(function(input, output) {
   
   #sim_freq for plot
   sim_freq <- reactive({
-    sim_list <- sim_data()
-    sim_list <- sim_list$eventTotals
+    sim_data <- sim_data()
+    sim_list <- sim_data$eventTotals
     x <- data.frame(sim_list = seq(1,max(sim_list)))
     x2 <- merge(x,table(sim_list),all = T)
     x2[is.na(x2)] <- 0
-    x2$Freq / sim_list$trials
+    x2$Freq / sim_data$trials
   })
   
-  #sim 0-(t/2) for independance test
+  #sim_mean for mean events
+  sim_mean <- reactive({
+    sim_data <- sim_data()
+    sim_eventTotals <- sim_data$eventTotals
+    sim_avg <- mean(sim_eventTotals)
+  })
+  
+  #sim_l_conf lower confidence interval
+  sim_l_conf <- reactive({
+    sim_data <- sim_data()
+    sim_eventTotals <- sim_data$eventTotals
+    conf_int <- t.test(sim_eventTotals)
+    conf_int$conf.int[1]
+  })
+  
+  #sim_u_conf upper confidence interval
+  sim_u_conf <- reactive({
+    sim_data <- sim_data()
+    sim_eventTotals <- sim_data$eventTotals
+    conf_int <- t.test(sim_eventTotals)
+    conf_int$conf.int[2]
+  })
+  
+  #sim t-(s-t/2) & (s-t/2) - s for independance test
   sim_arrivalTimes <- reactive({
     sim_data <- sim_data()
     t <- sim_data$start
@@ -160,10 +183,22 @@ shinyServer(function(input, output) {
             second_half <- x[x > mid_time]
             y <- data.frame(x = length(first_half), y = length(second_half))
           })
-    
-    
-    
+    z <- Reduce(rbind,z)
+    return(z)
   })
+  
+  #data of linear model of x~y of arrival times (for line plot)
+  sim_lm <- reactive({
+    
+    sim_arrivalTimes <- sim_arrivalTimes()
+    model <- lm(sim_arrivalTimes$y ~ sim_arrivalTimes$x)
+    intercept <- unname(model$coefficients[1])
+    x_variable <- unname(model$coefficients[2])
+    x <- c(min(sim_arrivalTimes$x)-1,max(sim_arrivalTimes$x)+1)
+    y <- intercept + x * x_variable
+    xy <- data.frame(x = x, y = y)
+  })
+  
   
   
   # Outputs -----------------------------------------------------------------
@@ -276,7 +311,15 @@ shinyServer(function(input, output) {
           color = "#FF0000",
           width = 2,
           value = mean_value()
-        ) 
+        )
+      ),
+      plotBands = list(
+        list(
+          from = sim_l_conf(),
+          to = sim_u_conf(),
+          color = "rgba(0,0,100,0.1",
+          label = list(text = "95% Confidence Interval for Mean")
+        )
       )) %>%
       hc_add_series(name = "Simulated Data",
                     data = sim_freq(),
@@ -290,9 +333,16 @@ shinyServer(function(input, output) {
       
   })
   
+  #render simulation scatter plot for independance proof
   output$sim_independance <- renderHighchart({
     
-    
+    hc <- highchart() %>%
+      hc_add_series(name = "Simulations",
+                    data = sim_arrivalTimes(),
+                    type = "scatter") %>%
+      hc_add_series(name = "Linear Model of y ~ x",
+                    data = sim_lm(),
+                    type = "line")
     
   })
   

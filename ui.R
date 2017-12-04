@@ -56,7 +56,7 @@ shinyUI(fluidPage(
                    numericInput("trials",
                                 "Simulation Trials",
                                 min = 10,
-                                max = 500,
+                                max = 5000,
                                 value = 100,
                                 step = 1)
                  )
@@ -64,7 +64,8 @@ shinyUI(fluidPage(
                
                mainPanel(
                  inlineCSS(".btn { margin-top: 10px;
-                                   margin-bottom: 50px }"),
+                                   margin-bottom: 50px }
+                           .MathJax { font-size: 3em; }"),
                  tabsetPanel(
                    tabPanel("Equations", uiOutput("equations")),
                    tabPanel("Theoreticl Graphs",

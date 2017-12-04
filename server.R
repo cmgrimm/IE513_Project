@@ -187,13 +187,28 @@ shinyServer(function(input, output) {
     return(z)
   })
   
-  #data of linear model of x~y of arrival times (for line plot)
+  #lm from simulated data
   sim_lm <- reactive({
     
     sim_arrivalTimes <- sim_arrivalTimes()
     model <- lm(sim_arrivalTimes$y ~ sim_arrivalTimes$x)
+    model2 <- summary(model)
     intercept <- unname(model$coefficients[1])
     x_variable <- unname(model$coefficients[2])
+    r_squared <- model2$r.squared
+    x <- c(intercept, x_variable,r_squared)
+    return(x)
+    
+  })
+  
+  #data of linear model of x~y of arrival times (for line plot)
+  sim_lm_data <- reactive({
+    
+    sim_arrivalTimes <- sim_arrivalTimes()
+    model <- sim_lm()
+    intercept <- model[1]
+    x_variable <- model[2]
+
     x <- c(min(sim_arrivalTimes$x)-1,max(sim_arrivalTimes$x)+1)
     y <- intercept + x * x_variable
     xy <- data.frame(x = x, y = y)
@@ -318,7 +333,8 @@ shinyServer(function(input, output) {
           from = sim_l_conf(),
           to = sim_u_conf(),
           color = "rgba(0,0,100,0.1",
-          label = list(text = "95% Confidence Interval for Mean")
+          label = list(text = "95% Confidence Interval for Simulated Mean",
+                       y = -1.5)
         )
       )) %>%
       hc_add_series(name = "Simulated Data",
@@ -341,8 +357,22 @@ shinyServer(function(input, output) {
                     data = sim_arrivalTimes(),
                     type = "scatter") %>%
       hc_add_series(name = "Linear Model of y ~ x",
-                    data = sim_lm(),
-                    type = "line")
+                    data = sim_lm_data(),
+                    marker=list(enabled=F),
+                    type = "line",
+                    label = list(
+                      text = "hi"
+                    )) %>%
+      hc_xAxis(title = list(text = "Events between t and (t+s)/2")) %>%
+      hc_yAxis(title = list(text = "Events bewteen (t+s)/2 and s")) %>%
+      hc_annotations(list(
+        xValue = sim_lm_data()[1,1]+1,
+        yValue = max(sim_arrivalTimes()[2]),
+        title = list(text =
+          paste0("y=",round(sim_lm()[2],1),"*x+",round(sim_lm()[1],1),"<br />","R^2=",round(sim_lm()[3],3))
+          ),
+        useHTML = T
+      ))
     
   })
   

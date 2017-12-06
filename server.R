@@ -298,14 +298,12 @@ shinyServer(function(input, output) {
       hc_title(text = "&lambda; as a Function of Time",
                align = 'left',
                useHTML = T) %>%
-      #hc_add_theme(hc_theme_tufte()) %>%
+      hc_add_theme(hc_theme_tufte()) %>%
       hc_tooltip(headerFormat = 't: <b>{point.key}</b><table>',
                  pointFormat = '<tr><td>{series.name}:  </td><td style="text-align: right"><b>{point.y}</b></td></tr></table>',
                  useHTML = T
                  ) %>%
-      hc_plotOptions(series=list(animation=F)) %>% 
-      hc_legend(enabled = F) %>% 
-      hc_yAxis(title = list(text = ""))
+      hc_plotOptions(series=list(animation=F))
   })#end highchart
   
   #render poisson density function given a range of time
@@ -324,18 +322,15 @@ shinyServer(function(input, output) {
       hc_add_series(name = "P(X = x)", 
                     data = round(p_dist(),2), 
                     marker=list(enabled=F),
-                    type = "areaspline",
-                    color = "rgba(115, 115, 115, 0.75)") %>%
+                    type = "areaspline") %>%
       hc_yAxis(min = 0, max = 0.3) %>%
       hc_title(text = paste0(c("P(N(",t_instance(),",",s_instance(),") = x) when &lambda;(t) = ",eq()),collapse="",sep=""),
                align = "left",
                useHTML = T) %>%
-      #hc_add_theme(hc_theme_tufte()) %>%
+      hc_add_theme(hc_theme_tufte()) %>%
       hc_tooltip(headerFormat = 'x: <b>{point.x}</b>',
                  pointFormat = '<table><tr><td>P(X = x): <b>{point.y}</b></td></tr></table>',
-                 useHTML = T) %>% 
-      hc_legend(enabled = F) %>% 
-      hc_yAxis(title = list(text = ""))
+                 useHTML = T)
   })#end highchart
   
   #render theoretical equations
